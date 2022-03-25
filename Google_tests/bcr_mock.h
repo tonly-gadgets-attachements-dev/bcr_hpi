@@ -5,5 +5,6 @@
 #ifndef GOOGLE_TESTS_BCR_MOCK_H
 #define GOOGLE_TESTS_BCR_MOCK_H
 #include <stdint.h>
-int32_t platform_write(void *handle, uint16_t reg, uint8_t *bufp, uint16_t len);
+int32_t platform_write(void *handle, uint16_t reg, const uint8_t *bufp, uint16_t len);
+int32_t platform_read(void *handle, uint16_t reg, uint8_t *bufp, uint16_t len);
 #endif //GOOGLE_TESTS_BCR_MOCK_H
