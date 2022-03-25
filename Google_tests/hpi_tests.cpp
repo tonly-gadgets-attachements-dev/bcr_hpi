@@ -43,6 +43,7 @@ TEST_F(BCR_Test, DeviceModeReturn0andModeIs0x92OnSuccess) {
     regdata[0] = 0x92;
     cypd3177_get_device_mode(&ctx, &device_mode);
     EXPECT_EQ(0x92, device_mode);
+    EXPECT_EQ(DEVICE_MODE_REG, bcr_spy_last_register());
 }
 
 TEST_F(BCR_Test, SiliconIDReturnsNegativeOnInvalidInputs)
@@ -63,4 +64,5 @@ TEST_F(BCR_Test, SiliconIDReturns0x11B0OnSuccess) {
     regdata[1] = 0xB0;
     cypd3177_get_silicon_id(&ctx, &device_mode);
     EXPECT_EQ(0x11B0, device_mode);
+    EXPECT_EQ(SILICON_ID_REG, bcr_spy_last_register());
 }

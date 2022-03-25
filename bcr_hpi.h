@@ -73,5 +73,27 @@ int32_t cypd3177_get_device_mode(ctx_t *ctx, uint8_t *mode);
  * @return int32_t inherited from user communication method
  */
 int32_t cypd3177_get_silicon_id(ctx_t *ctx, uint16_t *id);
+
+/**
+ * @brief  INTERRUPT register
+ *
+ */
+#define INTERRUPT_REG                     (0x0006U)
+/**
+ * @brief register structure of @INTERRUPT_REG
+ *
+ */
+typedef struct {
+    uint8_t device_interrupt    :1;
+    uint8_t pd_port_interrupt   :1;
+    uint8_t reserved            :6;
+}interrupt_reg_t;
+/**
+ * @brief get interrupt register
+ *
+ * @param ctx communication interface
+ * @param reg interrupt register
+ * @return int32_t inherited from user communication method
+ */
 /*! @} */
 #endif //_BCR_HPI_H
