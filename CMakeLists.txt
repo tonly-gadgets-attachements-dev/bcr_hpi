@@ -4,3 +4,5 @@ project(bcr_hpi C)
 set(CMAKE_C_STANDARD 99)
 
 add_executable(bcr_hpi main.c)
+
+add_subdirectory(Google_tests)
