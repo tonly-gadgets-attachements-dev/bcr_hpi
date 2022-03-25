@@ -6,5 +6,7 @@
 
 int32_t platform_write(void *handle, uint16_t reg, uint8_t *bufp, uint16_t len)
 {
-    return 0;
+    if (bufp == NULL || len == 0) {
+        return -1;
+    }
 }

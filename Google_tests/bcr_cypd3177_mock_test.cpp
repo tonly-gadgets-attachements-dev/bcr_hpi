@@ -21,6 +21,8 @@ protected:
     }
 };
 
-TEST_F(BCR_Cypd3177_Mock_Test, Test1) {
-    EXPECT_EQ(platform_write(NULL, 0, NULL, 0), 1);
+TEST_F(BCR_Cypd3177_Mock_Test, ReturnNegativeOneWhenInputIsNull) {
+    uint8_t input[4] = {0};
+    EXPECT_EQ(platform_write(NULL, 0, input, 0), -1);
+    EXPECT_EQ(platform_write(NULL, 0, NULL, 1), -1);
 }

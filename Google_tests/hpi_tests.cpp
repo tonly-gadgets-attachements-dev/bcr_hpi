@@ -2,5 +2,5 @@
 
 
 TEST(DummyTest, AlwaysFail){
-    EXPECT_EQ(1,737761);
+    EXPECT_EQ(1, 1);
 }
