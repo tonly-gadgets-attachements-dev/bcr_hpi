@@ -60,5 +60,18 @@ typedef struct{
  */
 int32_t cypd3177_get_device_mode(ctx_t *ctx, uint8_t *mode);
 
+/**
+ * @brief  SILICON_ID register
+ *
+ */
+#define SILICON_ID_REG                    (0x0002U)
+/**
+ * @brief get silicon id
+ *
+ * @param ctx communication interface
+ * @param id silicon id, uint16_t, always as 0x11B0U
+ * @return int32_t inherited from user communication method
+ */
+int32_t cypd3177_get_silicon_id(ctx_t *ctx, uint16_t *id);
 /*! @} */
 #endif //_BCR_HPI_H

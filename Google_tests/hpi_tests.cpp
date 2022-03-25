@@ -44,3 +44,23 @@ TEST_F(BCR_Test, DeviceModeReturn0andModeIs0x92OnSuccess) {
     cypd3177_get_device_mode(&ctx, &device_mode);
     EXPECT_EQ(0x92, device_mode);
 }
+
+TEST_F(BCR_Test, SiliconIDReturnsNegativeOnInvalidInputs)
+{
+    ctx_t ctx_invalid = {
+            .write_reg = NULL,
+            .read_reg = NULL,
+            .handle = NULL
+    };
+    uint16_t mode = 0;
+    EXPECT_EQ(-1, cypd3177_get_silicon_id(&ctx_invalid, NULL));
+    EXPECT_EQ(-1, cypd3177_get_silicon_id(NULL, &mode));
+    EXPECT_EQ(-1, cypd3177_get_silicon_id(&ctx, NULL));
+}
+TEST_F(BCR_Test, SiliconIDReturns0x11B0OnSuccess) {
+    uint16_t device_mode = 0;
+    regdata[0] = 0x11;
+    regdata[1] = 0xB0;
+    cypd3177_get_silicon_id(&ctx, &device_mode);
+    EXPECT_EQ(0x11B0, device_mode);
+}
