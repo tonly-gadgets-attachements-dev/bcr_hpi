@@ -38,8 +38,9 @@ TEST_F(BCR_Test, DeviceModeReturnsNegativeOnInvalidCtx)
     EXPECT_EQ(-1, cypd3177_get_device_mode(&ctx, NULL));
 }
 
-//TEST(BCR_Test, AlwaysFail){
-//    uint8_t device_mode = 0;
-//    cypd3177_get_device_mode(&ctx, &device_mode);
-//    EXPECT_EQ(0x92, device_mode);
-//}
+TEST_F(BCR_Test, DeviceModeReturn0andModeIs0x92OnSuccess) {
+    uint8_t device_mode = 0;
+    regdata[0] = 0x92;
+    cypd3177_get_device_mode(&ctx, &device_mode);
+    EXPECT_EQ(0x92, device_mode);
+}
