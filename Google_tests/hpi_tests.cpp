@@ -66,3 +66,32 @@ TEST_F(BCR_Test, SiliconIDReturns0x11B0OnSuccess) {
     EXPECT_EQ(0x11B0, device_mode);
     EXPECT_EQ(SILICON_ID_REG, bcr_spy_last_register());
 }
+
+TEST_F(BCR_Test, DeviceInterruptStatusReturnsNegativeOnInvalidInputs)
+{
+    ctx_t ctx_invalid = {
+            .write_reg = nullptr,
+            .read_reg = nullptr,
+            .handle = nullptr
+    };
+    uint8_t mode = 0;
+    EXPECT_EQ(-1, cypd3177_get_device_interrupt(&ctx_invalid, NULL));
+    EXPECT_EQ(-1, cypd3177_get_device_interrupt(NULL, &mode));
+    EXPECT_EQ(-1, cypd3177_get_device_interrupt(&ctx, NULL));
+}
+TEST_F(BCR_Test, DeviceInterruptPendingReturns0x00) {
+    uint8_t interrupt = 0;
+    regdata[0] = 0x01;
+    int32_t ret = cypd3177_get_device_interrupt(&ctx, &interrupt);
+    EXPECT_EQ(0x01, interrupt);
+    EXPECT_EQ(0x0, ret);
+    EXPECT_EQ(INTERRUPT_REG, bcr_spy_last_register());
+}
+TEST_F(BCR_Test, DeviceInterruptClearReturns0x00) {
+    uint8_t interrupt = 0;
+    regdata[0] = 0x00;
+    int32_t ret = cypd3177_get_device_interrupt(&ctx, &interrupt);
+    EXPECT_EQ(0x00, interrupt);
+    EXPECT_EQ(0x0, ret);
+    EXPECT_EQ(INTERRUPT_REG, bcr_spy_last_register());
+}

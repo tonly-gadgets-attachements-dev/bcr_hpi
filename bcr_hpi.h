@@ -89,11 +89,13 @@ typedef struct {
     uint8_t reserved            :6;
 }interrupt_reg_t;
 /**
- * @brief get interrupt register
+ * @brief get device interrupt
  *
  * @param ctx communication interface
  * @param reg interrupt register
+ * @param device_int device interrupt
  * @return int32_t inherited from user communication method
  */
+int32_t cypd3177_get_device_interrupt(ctx_t *ctx, uint8_t *device_int);
 /*! @} */
 #endif //_BCR_HPI_H

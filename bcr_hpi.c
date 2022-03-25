@@ -25,3 +25,17 @@ int32_t cypd3177_get_silicon_id(ctx_t *ctx, uint16_t *id) {
         return ret;
     }
 }
+
+int32_t cypd3177_get_device_interrupt(ctx_t *ctx, uint8_t *device_int) {
+    if (!ctx || !ctx->write_reg || !ctx->read_reg || !device_int) {
+        return -1;
+    }
+    interrupt_reg_t interrupt_reg;
+    int32_t ret = ctx->read_reg(ctx->handle, INTERRUPT_REG, (uint8_t *)&interrupt_reg, 1);
+    if (ret < 0) {
+        return ret;
+    } else {
+        *device_int = interrupt_reg.device_interrupt;
+        return ret;
+    }
+}
