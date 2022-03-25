@@ -4,6 +4,10 @@
 
 #include "gtest/gtest.h"
 
+extern "C" {
+#include "bcr_mock.h"
+}
+
 class BCR_Cypd3177_Mock_Test:public testing::Test
 {
 protected:
@@ -18,5 +22,5 @@ protected:
 };
 
 TEST_F(BCR_Cypd3177_Mock_Test, Test1) {
-    EXPECT_EQ(1, 1);
+    EXPECT_EQ(platform_write(NULL, 0, NULL, 0), 1);
 }
