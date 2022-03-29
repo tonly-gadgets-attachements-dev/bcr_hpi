@@ -92,10 +92,20 @@ typedef struct {
  * @brief get device interrupt
  *
  * @param ctx communication interface
- * @param reg interrupt register
  * @param device_int device interrupt
  * @return int32_t inherited from user communication method
  */
 int32_t cypd3177_get_device_interrupt(ctx_t *ctx, uint8_t *device_int);
+
+/**
+ * @brief get pd interrupt
+ *
+ * @param ctx communication interface
+ * @param pd_int pd interrupt
+ * @return int32_t inherited from user communication method
+ */
+int32_t cypd3177_get_pd_interrupt(ctx_t *ctx, uint8_t *pd_int);
+int32_t cypd3177_get_test_interrupt(ctx_t *ctx, uint8_t *pd_int);
+
 /*! @} */
 #endif //_BCR_HPI_H

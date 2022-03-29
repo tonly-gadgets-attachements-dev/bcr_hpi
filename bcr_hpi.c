@@ -39,3 +39,11 @@ int32_t cypd3177_get_device_interrupt(ctx_t *ctx, uint8_t *device_int) {
         return ret;
     }
 }
+
+int32_t cypd3177_get_pd_interrupt(ctx_t *ctx, uint8_t *pd_int) {
+    return 0;
+}
+
+int32_t cypd3177_get_test_interrupt(ctx_t *ctx, uint8_t *pd_int) {
+    return -1;
+}

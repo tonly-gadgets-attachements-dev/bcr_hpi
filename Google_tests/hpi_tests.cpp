@@ -21,7 +21,7 @@ protected:
     ctx_t ctx = {
             .write_reg = platform_write,
             .read_reg = platform_read,
-            .handle = NULL
+            .handle = nullptr
     };
 };
 
@@ -94,4 +94,17 @@ TEST_F(BCR_Test, DeviceInterruptClearReturns0x00) {
     EXPECT_EQ(0x00, interrupt);
     EXPECT_EQ(0x0, ret);
     EXPECT_EQ(INTERRUPT_REG, bcr_spy_last_register());
+}
+
+TEST_F(BCR_Test, PDInterruptStatusReturnsNegativeOnInvalidInputs)
+{
+    ctx_t ctx_invalid = {
+            .write_reg = nullptr,
+            .read_reg = nullptr,
+            .handle = nullptr
+    };
+    uint8_t pd_int = 0;
+    EXPECT_EQ(-1, cypd3177_get_pd_interrupt(&ctx_invalid, NULL));
+    EXPECT_EQ(-1, cypd3177_get_pd_interrupt(NULL, &pd_int));
+    EXPECT_EQ(-1, cypd3177_get_pd_interrupt(&ctx, NULL));
 }
