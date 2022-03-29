@@ -6,12 +6,12 @@ extern "C" {
 class BCR_Test:public testing::Test
 {
 protected:
-    virtual void SetUp()
+    void SetUp() override
     {
 //        std::cout<<"SetUp"<<std::endl;
         bcr_mock_create(regdata);
     }
-    virtual void TearDown()
+    void TearDown() override
     {
 //        std::cout<<"TearDown"<<std::endl;
     }
@@ -28,14 +28,14 @@ protected:
 TEST_F(BCR_Test, DeviceModeReturnsNegativeOnInvalidCtx)
 {
     ctx_t ctx_invalid = {
-            .write_reg = NULL,
-            .read_reg = NULL,
-            .handle = NULL
+            .write_reg = nullptr,
+            .read_reg = nullptr,
+            .handle = nullptr
     };
     uint8_t mode = 0;
-    EXPECT_EQ(-1, cypd3177_get_device_mode(&ctx_invalid, NULL));
-    EXPECT_EQ(-1, cypd3177_get_device_mode(NULL, &mode));
-    EXPECT_EQ(-1, cypd3177_get_device_mode(&ctx, NULL));
+    EXPECT_EQ(-1, cypd3177_get_device_mode(&ctx_invalid, nullptr));
+    EXPECT_EQ(-1, cypd3177_get_device_mode(nullptr, &mode));
+    EXPECT_EQ(-1, cypd3177_get_device_mode(&ctx, nullptr));
 }
 
 TEST_F(BCR_Test, DeviceModeReturn0andModeIs0x92OnSuccess) {
@@ -49,14 +49,14 @@ TEST_F(BCR_Test, DeviceModeReturn0andModeIs0x92OnSuccess) {
 TEST_F(BCR_Test, SiliconIDReturnsNegativeOnInvalidInputs)
 {
     ctx_t ctx_invalid = {
-            .write_reg = NULL,
-            .read_reg = NULL,
-            .handle = NULL
+            .write_reg = nullptr,
+            .read_reg = nullptr,
+            .handle = nullptr
     };
     uint16_t mode = 0;
-    EXPECT_EQ(-1, cypd3177_get_silicon_id(&ctx_invalid, NULL));
-    EXPECT_EQ(-1, cypd3177_get_silicon_id(NULL, &mode));
-    EXPECT_EQ(-1, cypd3177_get_silicon_id(&ctx, NULL));
+    EXPECT_EQ(-1, cypd3177_get_silicon_id(&ctx_invalid, nullptr));
+    EXPECT_EQ(-1, cypd3177_get_silicon_id(nullptr, &mode));
+    EXPECT_EQ(-1, cypd3177_get_silicon_id(&ctx, nullptr));
 }
 TEST_F(BCR_Test, SiliconIDReturns0x11B0OnSuccess) {
     uint16_t device_mode = 0;
@@ -75,9 +75,9 @@ TEST_F(BCR_Test, DeviceInterruptStatusReturnsNegativeOnInvalidInputs)
             .handle = nullptr
     };
     uint8_t mode = 0;
-    EXPECT_EQ(-1, cypd3177_get_device_interrupt(&ctx_invalid, NULL));
-    EXPECT_EQ(-1, cypd3177_get_device_interrupt(NULL, &mode));
-    EXPECT_EQ(-1, cypd3177_get_device_interrupt(&ctx, NULL));
+    EXPECT_EQ(-1, cypd3177_get_device_interrupt(&ctx_invalid, nullptr));
+    EXPECT_EQ(-1, cypd3177_get_device_interrupt(nullptr, &mode));
+    EXPECT_EQ(-1, cypd3177_get_device_interrupt(&ctx, nullptr));
 }
 TEST_F(BCR_Test, DeviceInterruptPendingReturns0x00) {
     uint8_t interrupt = 0;
@@ -104,7 +104,7 @@ TEST_F(BCR_Test, PDInterruptStatusReturnsNegativeOnInvalidInputs)
             .handle = nullptr
     };
     uint8_t pd_int = 0;
-    EXPECT_EQ(-1, cypd3177_get_pd_interrupt(&ctx_invalid, NULL));
-    EXPECT_EQ(-1, cypd3177_get_pd_interrupt(NULL, &pd_int));
-    EXPECT_EQ(-1, cypd3177_get_pd_interrupt(&ctx, NULL));
+    EXPECT_EQ(-1, cypd3177_get_pd_interrupt(&ctx_invalid, nullptr));
+    EXPECT_EQ(-1, cypd3177_get_pd_interrupt(nullptr, &pd_int));
+    EXPECT_EQ(-1, cypd3177_get_pd_interrupt(&ctx, nullptr));
 }
