@@ -105,7 +105,127 @@ int32_t cypd3177_get_device_interrupt(ctx_t *ctx, uint8_t *device_int);
  * @return int32_t inherited from user communication method
  */
 int32_t cypd3177_get_pd_interrupt(ctx_t *ctx, uint8_t *pd_int);
-int32_t cypd3177_get_test_interrupt(ctx_t *ctx, uint8_t *pd_int);
+
+/**
+ * @brief  PD_STATUS register
+ *
+ */
+#define PD_STATUS_REG                     (0x1008U)
+/**
+ * @brief register structure of @PD_STATUS_REG
+ *
+ */
+typedef struct {
+    uint8_t defaul_cfg                          :6;
+    uint8_t current_port_data_role              :1;
+    uint8_t reserved_a                          :1;
+    uint8_t current_port_power_role             :1;
+    uint8_t reserved_b                          :1;
+    uint8_t contract_state                      :1;
+    uint8_t reserved_c                          :3;
+    uint8_t rp_state                :1;
+    uint8_t policy_engine_state                 :1;
+    uint8_t pd_spec_ver                         :2;
+    uint8_t partner_pd_spec_ver                 :1;
+    uint8_t partner_unchunked_msg_spt_status    :1;
+    uint16_t reserved_d                         :12;
+}pd_status_reg_t;
+/**
+ * @brief get the default PD configuration of BCR (UFP Data Role and Sink Power Role)
+ *
+ * @param ctx communication interface
+ * @param pd_status PD_STATUS register : Default Config(UFP Data Role and Sink Power Role)
+ * @return int32_t inherited from user communication method
+ */
+int32_t cypd3177_get_default_config(ctx_t *ctx, uint8_t *pd_status);
+
+/**
+ * @brief Current Port Data Role.
+ *
+ * @param ctx communication interface
+ * @param pd_status PD_STATUS register : Current Port Data Role
+ *                  0 = UFP
+ *                  1 = DFP
+ * @return int32_t inherited from user communication method
+ */
+int32_t cypd3177_get_cur_port_data_role(ctx_t *ctx, uint8_t *pd_status);
+
+/**
+ * @brief Current Port Power Role
+ *
+ * @param ctx communication interface
+ * @param pd_status PD_STATUS register : Current Port Power Role
+ *                  0 = Sink;BCR always functions as a sink and so this bit is never expected to be set to 1.
+ * @return int32_t inherited from user communication method
+ */
+int32_t cypd3177_get_cur_port_power_role(ctx_t *ctx, uint8_t *pd_status);
+
+/**
+ * @brief Contract State
+ *
+ * @param ctx communication interface
+ * @param pd_status PD_STATUS register : Contract State
+ *                  0 = No contract exists with port partner
+ *                  1 = Explicit PD contract exists with port partner
+ * @return int32_t inherited from user communication method
+ */
+int32_t cypd3177_get_contract_state(ctx_t *ctx, uint8_t *pd_status);
+
+/**
+ * @brief Sink Tx Ready Status (Rp state)
+ *
+ * @param ctx communication interface
+ * @param pd_status PD_STATUS register : Contract State
+ *                  0 = Rp is in SinkTxOk (Sink can send messages to Source)
+ *                  1 = Rp is in SinkTxNG (Sink shouldn’t send messages)
+ * @return int32_t inherited from user communication method
+ */
+int32_t cypd3177_get_rp_state(ctx_t *ctx, uint8_t *pd_status);
+
+/**
+ * @brief Policy Engine State (see Chapter 8 of PD spec)
+ *
+ * @param ctx communication interface
+ * @param pd_status PD_STATUS register : Policy Engine State (see Chapter 8 of PD spec)
+ *                  0 = Port is not in PE_SNK_Ready state
+ *                  1 = Port is in PE_SNK_Ready state
+ * @return int32_t inherited from user communication method
+ */
+int32_t cypd3177_get_policy_engine_state(ctx_t *ctx, uint8_t *pd_status);
+
+/**
+ * @brief PD Spec revision supported by BCR
+ *
+ * @param ctx communication interface
+ * @param pd_status PD_STATUS register : PD Spec revision supported by BCR
+ *                  0 = PD 2.0
+ *                  1 = PD 3.0
+ * @return int32_t inherited from user communication method
+ */
+int32_t cypd3177_get_pd_spec_ver(ctx_t *ctx, uint8_t *pd_status);
+
+/**
+ * @brief Partner (Attached device) PD Spec revision
+ *
+ * @param ctx communication interface
+ * @param pd_status PD_STATUS register : Partner (Attached device) PD Spec revision
+ *                  0 = Partner is PD 2.0 device
+ *                  1 = Partner is PD 3.0 device
+ * @return int32_t inherited from user communication method
+ */
+int32_t cypd3177_get_partner_pd_spec_ver(ctx_t *ctx, uint8_t *pd_status);
+
+/**
+ * @brief Partner (Attached device) PD Spec revision
+ *
+ * @param ctx communication interface
+ * @param pd_status PD_STATUS register : Partner (Attached device) PD Spec revision
+ *                  0 = PPartner doesn’t support un-chunked messages
+ *                  1 = PPartner supports un-chunked messages
+ * @return int32_t inherited from user communication method
+ */
+int32_t cypd3177_get_partner_unchunked_msg_spt_status (ctx_t *ctx, uint8_t *pd_status);
+
 
 /*! @} */
 #endif //_BCR_HPI_H

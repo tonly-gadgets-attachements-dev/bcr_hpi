@@ -108,3 +108,80 @@ TEST_F(BCR_Test, PDInterruptStatusReturnsNegativeOnInvalidInputs)
     EXPECT_EQ(-1, cypd3177_get_pd_interrupt(nullptr, &pd_int));
     EXPECT_EQ(-1, cypd3177_get_pd_interrupt(&ctx, nullptr));
 }
+TEST_F(BCR_Test, PDInterruptPendingReturns0x00) {
+    uint8_t interrupt = 0;
+    regdata[0] = 0x03;
+    int32_t ret = cypd3177_get_pd_interrupt(&ctx, &interrupt);
+    EXPECT_EQ(0x01, interrupt);
+    EXPECT_EQ(0x0, ret);
+    EXPECT_EQ(INTERRUPT_REG, bcr_spy_last_register());
+}
+TEST_F(BCR_Test, PDInterruptClearReturns0x00) {
+    uint8_t interrupt = 0;
+    regdata[0] = 0x00;
+    int32_t ret = cypd3177_get_pd_interrupt(&ctx, &interrupt);
+    EXPECT_EQ(0x00, interrupt);
+    EXPECT_EQ(0x0, ret);
+    EXPECT_EQ(INTERRUPT_REG, bcr_spy_last_register());
+}
+
+TEST_F(BCR_Test, DefaultConfigReturnsNegativeOnInvalidInputs)
+{
+    ctx_t ctx_invalid = {
+            .write_reg = nullptr,
+            .read_reg = nullptr,
+            .handle = nullptr
+    };
+    uint8_t pd_status = 0;
+    EXPECT_EQ(-1, cypd3177_get_default_config(&ctx_invalid, nullptr));
+    EXPECT_EQ(-1, cypd3177_get_default_config(nullptr, &pd_status));
+    EXPECT_EQ(-1, cypd3177_get_default_config(&ctx, nullptr));
+}
+TEST_F(BCR_Test, DefaultConfigReturns0x00OnSuccess) {
+    uint8_t pd_status = 0;
+    regdata[0] = 0x00;
+    int32_t ret = cypd3177_get_default_config(&ctx, &pd_status);
+    EXPECT_EQ(0x00, pd_status);
+    EXPECT_EQ(0x0, ret);
+    EXPECT_EQ(PD_STATUS_REG, bcr_spy_last_register());
+}
+
+TEST_F(BCR_Test, CurPortDataRoleReturnsNegativeOnInvalidInputs)
+{
+    ctx_t ctx_invalid = {
+            .write_reg = nullptr,
+            .read_reg = nullptr,
+            .handle = nullptr
+    };
+    uint8_t pd_status = 0;
+    EXPECT_EQ(-1, cypd3177_get_cur_port_data_role(&ctx_invalid, nullptr));
+    EXPECT_EQ(-1, cypd3177_get_cur_port_data_role(nullptr, &pd_status));
+    EXPECT_EQ(-1, cypd3177_get_cur_port_data_role(&ctx, nullptr));
+}
+TEST_F(BCR_Test, CurPortDataRoleReturns0x00OnSuccess) {
+    uint8_t pd_status = 0;
+    regdata[0] = 0x00;
+    regdata[1] = 0x04;
+    int32_t ret = cypd3177_get_cur_port_data_role(&ctx, &pd_status);
+    EXPECT_EQ(0x00, pd_status);
+    EXPECT_EQ(0x0, ret);
+    EXPECT_EQ(PD_STATUS_REG, bcr_spy_last_register());
+}
+TEST_F(BCR_Test, CurPortDataRoleReturns0x01OnSuccess) {
+    uint8_t pd_status = 0;
+    regdata[0] = 0x40;
+    regdata[1] = 0x04;
+    int32_t ret = cypd3177_get_cur_port_data_role(&ctx, &pd_status);
+    EXPECT_EQ(0x01, pd_status);
+    EXPECT_EQ(0x0, ret);
+    EXPECT_EQ(PD_STATUS_REG, bcr_spy_last_register());
+}
+TEST_F(BCR_Test, CurPortDataRoleReturnsNegativeOnFail) {
+    uint8_t pd_status = 0;
+    regdata[0] = 0x00;
+    regdata[1] = 0x00;
+    int32_t ret = cypd3177_get_cur_port_data_role(&ctx, &pd_status);
+    EXPECT_EQ(0x00, pd_status);
+    EXPECT_EQ(-1, ret);
+    EXPECT_EQ(PD_STATUS_REG, bcr_spy_last_register());
+}
