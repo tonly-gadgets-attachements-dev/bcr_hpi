@@ -74,13 +74,13 @@ TEST_F(BCR_Test, DeviceInterruptStatusReturnsNegativeOnInvalidInputs)
             .read_reg = nullptr,
             .handle = nullptr
     };
-    uint8_t mode = 0;
+    dev_or_pd_int_e mode = no_int;
     EXPECT_EQ(-1, cypd3177_get_device_interrupt(&ctx_invalid, nullptr));
     EXPECT_EQ(-1, cypd3177_get_device_interrupt(nullptr, &mode));
     EXPECT_EQ(-1, cypd3177_get_device_interrupt(&ctx, nullptr));
 }
 TEST_F(BCR_Test, DeviceInterruptPendingReturns0x00) {
-    uint8_t interrupt = 0;
+    dev_or_pd_int_e interrupt = no_int;
     regdata[0] = 0x01;
     int32_t ret = cypd3177_get_device_interrupt(&ctx, &interrupt);
     EXPECT_EQ(0x01, interrupt);
@@ -88,7 +88,7 @@ TEST_F(BCR_Test, DeviceInterruptPendingReturns0x00) {
     EXPECT_EQ(INTERRUPT_REG, bcr_spy_last_register());
 }
 TEST_F(BCR_Test, DeviceInterruptClearReturns0x00) {
-    uint8_t interrupt = 0;
+    dev_or_pd_int_e interrupt = no_int;
     regdata[0] = 0x00;
     int32_t ret = cypd3177_get_device_interrupt(&ctx, &interrupt);
     EXPECT_EQ(0x00, interrupt);
@@ -103,13 +103,13 @@ TEST_F(BCR_Test, PDInterruptStatusReturnsNegativeOnInvalidInputs)
             .read_reg = nullptr,
             .handle = nullptr
     };
-    uint8_t pd_int = 0;
+    dev_or_pd_int_e pd_int = no_int;
     EXPECT_EQ(-1, cypd3177_get_pd_interrupt(&ctx_invalid, nullptr));
     EXPECT_EQ(-1, cypd3177_get_pd_interrupt(nullptr, &pd_int));
     EXPECT_EQ(-1, cypd3177_get_pd_interrupt(&ctx, nullptr));
 }
 TEST_F(BCR_Test, PDInterruptPendingReturns0x00) {
-    uint8_t interrupt = 0;
+    dev_or_pd_int_e interrupt = no_int;
     regdata[0] = 0x03;
     int32_t ret = cypd3177_get_pd_interrupt(&ctx, &interrupt);
     EXPECT_EQ(0x01, interrupt);
@@ -117,7 +117,7 @@ TEST_F(BCR_Test, PDInterruptPendingReturns0x00) {
     EXPECT_EQ(INTERRUPT_REG, bcr_spy_last_register());
 }
 TEST_F(BCR_Test, PDInterruptClearReturns0x00) {
-    uint8_t interrupt = 0;
+    dev_or_pd_int_e interrupt = no_int;
     regdata[0] = 0x00;
     int32_t ret = cypd3177_get_pd_interrupt(&ctx, &interrupt);
     EXPECT_EQ(0x00, interrupt);
@@ -153,13 +153,13 @@ TEST_F(BCR_Test, CurPortDataRoleReturnsNegativeOnInvalidInputs)
             .read_reg = nullptr,
             .handle = nullptr
     };
-    uint8_t pd_status = 0;
+    current_port_data_role_e pd_status = ufp;
     EXPECT_EQ(-1, cypd3177_get_cur_port_data_role(&ctx_invalid, nullptr));
     EXPECT_EQ(-1, cypd3177_get_cur_port_data_role(nullptr, &pd_status));
     EXPECT_EQ(-1, cypd3177_get_cur_port_data_role(&ctx, nullptr));
 }
 TEST_F(BCR_Test, CurPortDataRoleReturns0x00OnSuccess) {
-    uint8_t pd_status = 0;
+    current_port_data_role_e pd_status = ufp;
     regdata[0] = 0x00;
     regdata[1] = 0x04;
     int32_t ret = cypd3177_get_cur_port_data_role(&ctx, &pd_status);
@@ -168,7 +168,7 @@ TEST_F(BCR_Test, CurPortDataRoleReturns0x00OnSuccess) {
     EXPECT_EQ(PD_STATUS_REG, bcr_spy_last_register());
 }
 TEST_F(BCR_Test, CurPortDataRoleReturns0x01OnSuccess) {
-    uint8_t pd_status = 0;
+    current_port_data_role_e pd_status = ufp;
     regdata[0] = 0x40;
     regdata[1] = 0x04;
     int32_t ret = cypd3177_get_cur_port_data_role(&ctx, &pd_status);
@@ -177,11 +177,48 @@ TEST_F(BCR_Test, CurPortDataRoleReturns0x01OnSuccess) {
     EXPECT_EQ(PD_STATUS_REG, bcr_spy_last_register());
 }
 TEST_F(BCR_Test, CurPortDataRoleReturnsNegativeOnFail) {
-    uint8_t pd_status = 0;
+    current_port_data_role_e pd_status = ufp;
     regdata[0] = 0x00;
     regdata[1] = 0x00;
     int32_t ret = cypd3177_get_cur_port_data_role(&ctx, &pd_status);
     EXPECT_EQ(0x00, pd_status);
     EXPECT_EQ(-1, ret);
     EXPECT_EQ(PD_STATUS_REG, bcr_spy_last_register());
+}
+
+TEST_F(BCR_Test, CcPolaarityReturnsNegativeOnInvalidInputs)
+{
+    ctx_t ctx_invalid = {
+            .write_reg = nullptr,
+            .read_reg = nullptr,
+            .handle = nullptr
+    };
+    cc_polarity_e typec_status = cc1;
+    EXPECT_EQ(-1, cypd3177_get_cc_polarity(&ctx_invalid, nullptr));
+    EXPECT_EQ(-1, cypd3177_get_cc_polarity(nullptr, &typec_status));
+    EXPECT_EQ(-1, cypd3177_get_cc_polarity(&ctx, nullptr));
+}
+TEST_F(BCR_Test, CcPolaarityReturns0x00OnSuccess) {
+    cc_polarity_e typec_status = cc1;
+    regdata[0] = 0x01;
+    int32_t ret = cypd3177_get_cc_polarity(&ctx, &typec_status);
+    EXPECT_EQ(0x00, typec_status);
+    EXPECT_EQ(0x0, ret);
+    EXPECT_EQ(TYPE_C_STATUS_REG, bcr_spy_last_register());
+}
+TEST_F(BCR_Test, CcPolaarityReturns0x01OnSuccess) {
+    cc_polarity_e typec_status = cc1;
+    regdata[0] = 0x03;
+    int32_t ret = cypd3177_get_cc_polarity(&ctx, &typec_status);
+    EXPECT_EQ(0x01, typec_status);
+    EXPECT_EQ(0x0, ret);
+    EXPECT_EQ(TYPE_C_STATUS_REG, bcr_spy_last_register());
+}
+TEST_F(BCR_Test, CcPolaarityReturnsNegativeOnFail) {
+    cc_polarity_e typec_status = cc1;
+    regdata[0] = 0x00;
+    int32_t ret = cypd3177_get_cc_polarity(&ctx, &typec_status);
+    EXPECT_EQ(0x00, typec_status);
+    EXPECT_EQ(-1, ret);
+    EXPECT_EQ(TYPE_C_STATUS_REG, bcr_spy_last_register());
 }
