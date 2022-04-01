@@ -276,11 +276,11 @@ int32_t cypd3177_get_partner_unchunked_msg_spt_status (ctx_t *ctx, partner_unchu
  *
  */
 typedef struct {
-    uint8_t partner_conn_status    :1;
-    uint8_t cc_polarity   :1;
-    uint8_t attached_dev_type            :3;
-    uint8_t reserved            :1;
-    uint8_t typec_cur_lvl            :2;
+    uint8_t partner_conn_status     :1;
+    uint8_t cc_polarity             :1;
+    uint8_t attached_dev_type       :3;
+    uint8_t reserved                :1;
+    uint8_t typec_cur_lvl           :2;
 }typec_status_reg_t;
 
 typedef enum{
@@ -373,5 +373,321 @@ int32_t cypd3177_get_typec_cur_lvl(ctx_t *ctx, typec_cur_lvl_e *cur_lvl);
  * @return int32_t inherited from user communication method
  */
 int32_t cypd3177_get_vbus_vol(ctx_t *ctx, uint16_t *vol);
+
+
+/**
+ * @brief  CURRENT_PDO register
+ *
+ */
+#define CURRENT_PDO_REG                 (0x1010U)
+/**
+ * @brief register structure of @CURRENT_PDO_REG
+ *
+ */
+
+/**
+ * @brief CURRENT_PDO
+ *
+ * @param ctx communication interface
+ * @param pdo Active PDO.
+ * This is the 32-bit Power Data Object (PDO) that was most recently received from the attached Source.
+ *
+ * @return int32_t inherited from user communication method
+ */
+int32_t cypd3177_get_cur_pdo(ctx_t *ctx, uint32_t *pdo);
+
+
+/**
+ * @brief  CURRENT_RDO register
+ *
+ */
+#define CURRENT_RDO_REG                 (0x1014U)
+/**
+ * @brief register structure of @CURRENT_PDO_REG
+ *
+ */
+
+/**
+ * @brief CURRENT_RDO
+ *
+ * @param ctx communication interface
+ * @param pdo Active RDO.
+ * This is the 32-bit Request Data Object (PDO) that was most recently sent from BCR to the attached Source.
+ *
+ * @return int32_t inherited from user communication method
+ */
+int32_t cypd3177_get_cur_rdo(ctx_t *ctx, uint32_t *rdo);
+
+
+/**
+ * @brief  SWAP_RESPONSE register
+ *
+ */
+#define SWAP_RESPONSE_REG                     (0x1028U)
+/**
+ * @brief register structure of @SWAP_RESPONSE_REG
+ *
+ */
+typedef struct {
+    uint8_t dr_swap_response    :2;
+    uint8_t reserved_a          :2;
+    uint8_t vconn_swap_response :2;
+    uint8_t reserved_b          :2;
+}swap_response_reg_t;
+
+typedef enum{
+    accept_swap = 0,
+    reject_swap = 1,
+    send_wait_to_swap = 2,
+    not_surport_swap = 3
+}response_type_e;
+/**
+ * @brief DR_Swap Response
+ *
+ * @param ctx communication interface
+ * @param dr_swap_resp DR_Swap Response
+ *              00 = Accept Swap
+ *              01 = Reject Swap
+ *              10 = Send Wait to the swap message
+ *              11 = Swap is not supported (in PD 2.0 contracts, BCR will send “Reject”; in PD 3.0 contracts, BCR will send “Not_Supported”)
+ * @return int32_t inherited from user communication method
+ */
+int32_t cypd3177_get_de_swap_response(ctx_t *ctx, response_type_e *dr_swap_resp);
+
+/**
+ * @brief VCONN_Swap Response
+ *
+ * @param ctx communication interface
+ * @param vconn_swap_resp DR_Swap Response
+ *              00 = Accept Swap
+ *              01 = Reject Swap
+ *              10 = Send Wait to the swap message
+ *              11 = Swap is not supported (in PD 2.0 contracts, BCR will send “Reject”; in PD 3.0 contracts, BCR will send “Not_Supported”)
+ * @return int32_t inherited from user communication method
+ */
+int32_t cypd3177_get_vconn_swap_response(ctx_t *ctx, response_type_e *vconn_swap_resp);
+
+
+/**
+ * @brief  EVENT_STATUS register
+ *
+ */
+#define EVENT_STATUS_REG                     (0x1044U)
+/**
+ * @brief register structure of @EVENT_STATUS_REG
+ *
+ */
+typedef struct {
+    uint8_t typec_dev_attached                  :1;
+    uint8_t typec_dev_disconnected              :1;
+    uint8_t pd_contract_nego_completed          :1;
+    uint8_t power_role_swap_completed           :1;
+
+    uint8_t data_role_swap_completed            :1;
+    uint8_t vconn_swap_completed                :1;
+    uint8_t hard_reset_received                 :1;
+    uint8_t hard_reset_sent                     :1;
+
+    uint8_t soft_reset_sent                     :1;
+    uint8_t cable_reset_sent                    :1;
+    uint8_t typec_err_recovery_initiated        :1;
+    uint8_t bcr_entered_source_disabled_state   :1;
+
+    uint32_t reserved_a                         :17;
+    uint8_t unexpected_volt_on_vbus             :1;
+    uint8_t vbus_volt_outside_expected_range :1;
+    uint8_t reserved_b                          :1;
+}event_status_reg_t;
+
+typedef enum{
+    event_false = 0,
+    event_true = 1
+}event_state_e;
+/**
+ * @brief  Type-C Device Attached
+ *
+ * @param ctx communication interface
+ * @param dr_swap_resp  Type-C Device Attached : Type-C Device Attached
+ *
+ * @return int32_t inherited from user communication method
+ */
+int32_t cypd3177_check_is_typec_dev_attached(ctx_t *ctx, event_state_e *state);
+
+/**
+ * @brief  Type-C Device Disconnected
+ *
+ * @param ctx communication interface
+ * @param dr_swap_resp  Type-C Device Attached : Type-C Device Disconnected
+ *
+ * @return int32_t inherited from user communication method
+ */
+int32_t cypd3177_check_is_typec_dev_disconnected(ctx_t *ctx, event_state_e *state);
+
+/**
+ * @brief  PD Contract Negotiation Completed
+ *
+ * @param ctx communication interface
+ * @param dr_swap_resp  PD Contract Negotiation Completed : PD Contract Negotiation Completed
+ *
+ * @return int32_t inherited from user communication method
+ */
+int32_t cypd3177_check_is_pd_contract_nego_completed(ctx_t *ctx, event_state_e *state);
+
+/**
+ * @brief  Power Role Swap Completed
+ *
+ * @param ctx communication interface
+ * @param dr_swap_resp  Power Role Swap Completed : Power Role Swap Completed
+ *
+ * @return int32_t inherited from user communication method
+ */
+int32_t cypd3177_check_is_power_role_swap_completed(ctx_t *ctx, event_state_e *state);
+
+/**
+ * @brief  Data Role Swap Completed
+ *
+ * @param ctx communication interface
+ * @param dr_swap_resp  Data Role Swap Completed : Data Role Swap Completed
+ *
+ * @return int32_t inherited from user communication method
+ */
+int32_t cypd3177_check_is_data_role_swap_completed(ctx_t *ctx, event_state_e *state);
+
+/**
+ * @brief  VCONN Swap Completed
+ *
+ * @param ctx communication interface
+ * @param dr_swap_resp  VCONN Swap Completed : VCONN Swap Completed
+ *
+ * @return int32_t inherited from user communication method
+ */
+int32_t cypd3177_check_is_vconn_swap_completed(ctx_t *ctx, event_state_e *state);
+
+/**
+ * @brief  Hard Reset Received
+ *
+ * @param ctx communication interface
+ * @param dr_swap_resp  Hard Reset Received : Hard Reset Received
+ *
+ * @return int32_t inherited from user communication method
+ */
+int32_t cypd3177_check_is_hard_reset_received(ctx_t *ctx, event_state_e *state);
+
+/**
+ * @brief  Hard Reset Sent
+ *
+ * @param ctx communication interface
+ * @param dr_swap_resp  Hard Reset Sent : Hard Reset Sent
+ *
+ * @return int32_t inherited from user communication method
+ */
+int32_t cypd3177_check_is_hard_reset_sent(ctx_t *ctx, event_state_e *state);
+
+/**
+ * @brief  Soft Reset Sent
+ *
+ * @param ctx communication interface
+ * @param dr_swap_resp  Soft Reset Sent : Soft Reset Sent
+ *
+ * @return int32_t inherited from user communication method
+ */
+int32_t cypd3177_check_is_soft_reset_sent(ctx_t *ctx, event_state_e *state);
+
+/**
+ * @brief  Cable Reset Sent
+ *
+ * @param ctx communication interface
+ * @param dr_swap_resp  Cable Reset Sent : Cable Reset Sent
+ *
+ * @return int32_t inherited from user communication method
+ */
+int32_t cypd3177_check_is_cable_reset_sent(ctx_t *ctx, event_state_e *state);
+
+/**
+ * @brief  Type-C Error Recovery Initiated
+ *
+ * @param ctx communication interface
+ * @param dr_swap_resp  Type-C Error Recovery Initiated : Type-C Error Recovery Initiated
+ *
+ * @return int32_t inherited from user communication method
+ */
+int32_t cypd3177_check_is_typec_err_recovery_initiated(ctx_t *ctx, event_state_e *state);
+
+/**
+ * @brief  BCR Entered Source Disabled State
+ *
+ * @param ctx communication interface
+ * @param dr_swap_resp  BCR Entered Source Disabled State : BCR Entered Source Disabled State
+ *
+ * @return int32_t inherited from user communication method
+ */
+int32_t cypd3177_check_is_bcr_entered_src_disabled_state(ctx_t *ctx, event_state_e *state);
+
+/**
+ * @brief   Unexpected voltage on VBUS
+ *
+ * @param ctx communication interface
+ * @param dr_swap_resp  BCR Entered Sink Disabled State :  Unexpected voltage on VBUS
+ *
+ * @return int32_t inherited from user communication method
+ */
+int32_t cypd3177_check_is_unexpected_volt_on_vbus(ctx_t *ctx, event_state_e *state);
+
+/**
+ * @brief   VBUS voltage is outside expected range
+ *
+ * @param ctx communication interface
+ * @param dr_swap_resp  BCR Entered Sink Disabled State :  VBUS voltage is outside expected range
+ *
+ * @return int32_t inherited from user communication method
+ */
+int32_t cypd3177_check_is_vbus_volt_outside_expected_range(ctx_t *ctx, event_state_e *state);
+
+
+/**
+ * @brief  READ_GPIO_LEVEL register
+ * This register is used to read the logic level of the GPIO_1 pin in BCR.
+ * The mode of the GPIO should be set to one of the digital drive modes (Values 1~7 in SET_GPIO_MODE) before reading this register.
+ * Else, this register will always contain 0x00.
+ */
+#define READ_GPIO_LEVEL_REG                     (0x0082U)
+/**
+ * @brief register structure of @READ_GPIO_LEVEL_REG
+ *
+ */
+/*! @} */
+
+/**
+ * @brief   VBUS voltage is outside expected range
+ *
+ * @param ctx communication interface
+ * @param gpio_level  GPIO level
+ *
+ * @return int32_t inherited from user communication method
+ */
+int32_t cypd3177_read_gpio_level(ctx_t *ctx, uint8_t *gpio_level);
+
+/**
+ * @brief  SAMPLE_GPIO register
+ * This register is used to sample the voltage on the GPIO_1 pin in BCR.
+ * The mode of the GPIO should be set to Analog mode (Value 0 in SET_GPIO_MODE) before reading this register.
+ * Else, this register will always contain 0x00.
+ */
+#define SAMPLE_GPIO_REG                     (0x0083U)
+/**
+ * @brief register structure of @SAMPLE_GPIO_REG
+ *
+ */
+
+
+/**
+ * @brief   VBUS voltage is outside expected range
+ *
+ * @param ctx communication interface
+ * @param volt_level  Voltage Level
+ *
+ * @return int32_t inherited from user communication method
+ */
+int32_t cypd3177_sample_gpio(ctx_t *ctx, uint8_t *volt_level);
 /*! @} */
 #endif //_BCR_HPI_H
